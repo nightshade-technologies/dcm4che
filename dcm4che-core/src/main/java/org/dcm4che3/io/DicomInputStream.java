@@ -843,14 +843,14 @@ public class DicomInputStream extends FilterInputStream
         if (rlen < 8
                 || !guessTransferSyntax(b132, rlen, false)
                 && !guessTransferSyntax(b132, rlen, true))
-            throw new DicomStreamException(NOT_A_DICOM_STREAM);
+            throw new IOException(NOT_A_DICOM_STREAM);
         reset();
         hasfmi = TagUtils.isFileMetaInformation(
                 ByteUtils.bytesToTag(b132, 0, bigEndian));
     }
 
     private boolean guessTransferSyntax(byte[] b128, int rlen, boolean bigEndian)
-            throws DicomStreamException {
+            throws IOException {
         int tag1 = ByteUtils.bytesToTag(b128, 0, bigEndian);
         VR vr = ElementDictionary.vrOf(tag1, null);
         if (vr == VR.UN)
@@ -867,7 +867,7 @@ public class DicomInputStream extends FilterInputStream
             return false;
 
         if (bigEndian)
-            throw new DicomStreamException(IMPLICIT_VR_BIG_ENDIAN);
+            throw new IOException(IMPLICIT_VR_BIG_ENDIAN);
 
         this.tsuid = UID.ImplicitVRLittleEndian;
         this.bigEndian = false;
